@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements NetView {
         mRecycler = (RecyclerView) findViewById(R.id.recycler);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mTv = (TextView) findViewById(R.id.tv);
-        //移动到点击的条目对应的图片
-        //mViewPager.setCurrentItem(mPosition);
         //管理器
         mRecycler.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         //数据源
@@ -64,24 +62,27 @@ public class MainActivity extends AppCompatActivity implements NetView {
             @Override
             public void onclick(int position) {
                 mPosition = position;
+                //当点击条目时recyclerview不可见   viewpager和textview可见
                 mRecycler.setVisibility(View.GONE);
                 mViewPager.setVisibility(View.VISIBLE);
                 mTv.setVisibility(View.VISIBLE);
                 initvp(position);
+                //移动到点击的条目对应的图片
                 mViewPager.setCurrentItem(mPosition);
             }
         });
-
-
     }
 
     private void initvp(int position) {
         views = new ArrayList<>();
+        //因为要获取条目的小标 所以要遍历集合的长度
         for (int i = 0; i <fuliBeans.size() ; i++) {
+            //加载布局
             View view= LayoutInflater.from(this).inflate(R.layout.vp,null);
-
+            //给控件赋值
             ImageView iv = view.findViewById(R.id.iv);
             Glide.with(this).load(fuliBeans.get(i).getUrl()).into(iv);
+            //将遍历出来的小标添加到viewpager的集合中
             views.add(view);
         }
         myVpAdapter = new MyVpAdapter(fuliBeans,views);
@@ -123,12 +124,16 @@ public class MainActivity extends AppCompatActivity implements NetView {
 
     @Override
     public void onBackPressed() {
-
+       //如果recyclerview页面不可见  GONE--不可见
         if (mRecycler.getVisibility() == View.GONE) {
+            //那么返回时如果recyclerview页面可见   VISIBLE--可见
             mRecycler.setVisibility(View.VISIBLE);
+            //返回时viewpager和textview不可见
             mViewPager.setVisibility(View.GONE);
             mTv.setVisibility(View.GONE);
+            //否则
         } else {
+            //就关闭
             super.onBackPressed();
         }
     }
